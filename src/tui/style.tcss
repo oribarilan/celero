@@ -1,0 +1,38 @@
+WorkItem {
+    content-align: center middle;
+    border: solid $boost-lighten-3;
+    padding: 0;
+    margin: 0;
+    width: 20;
+    height: 7;
+}
+
+WorkItem:focus {
+    border: wide $accent;
+}
+
+WorkItem:hover {
+    border: wide $secondary;
+}
+
+SprintBoard {
+    content-align: center middle;
+    layout: horizontal;
+    /* Horizontal layout */
+}
+
+SprintColumn {
+    border: round $secondary;
+    border-title-align: left;
+    scrollbar-size: 1 1;
+    width: 24;
+    content-align: center middle;
+}
+
+#sprint_column_title {
+    content-align: center middle;
+}
+
+.selected {
+    border: solid $accent;
+}

@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib", "-ra"]
+markers = [
+    "e2e: e2e tests that use external resources",
+]
+pythonpath = "src"
+
+[tool.ruff]
+line-length = 120
+
+[tool.mypy]
+disable_error_code = "import-untyped"
