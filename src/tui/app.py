@@ -10,7 +10,14 @@ from textual.containers import ScrollableContainer, Container, Horizontal, Verti
 from textual.binding import Binding
 from typing import Any
 from textual.widgets.option_list import Option, Separator
+from textual import log
+import logging
+from textual.logging import TextualHandler
 
+logging.basicConfig(
+    level="NOTSET",
+    handlers=[TextualHandler()],
+)
 
 class QuestionWithOptionsModal(ModalScreen):
     """Screen with a dialog to quit."""
@@ -82,11 +89,10 @@ class WorkItem(Container):
     # self.add_class("selected")
 
     # def action_edit(self) -> None:
-    # self.app.push_screen(WorkItemEdit(self.title))
+    #     self.app.push_screen(WorkItemEdit(self.title))
 
     def action_pressed(self) -> None:
         print("hello")
-
 
 class SprintColumn(ListView):
     def __init__(self, title: str, idx: int):
@@ -99,6 +105,8 @@ class SprintColumn(ListView):
         ("e", "edit", "Delete"),
         ("d", "delete", "Delete"),
         ("m", "move", "Move"),
+        ("left", "move_column_focus_left", "Move focus left"),  # TODO hide this
+        ("right", "move_column_focus_right", "Move focus right"),  # TODO hide this
     ]
 
     def add_work_item(self, item: WorkItem) -> None:
@@ -126,6 +134,30 @@ class SprintColumn(ListView):
                     ],
                 )
             )
+
+    def action_move_column_focus_right(self) -> None:
+        self._move_column_focus(1)
+
+    def action_move_column_focus_left(self) -> None:
+        self._move_column_focus(-1)
+
+    def _move_column_focus(self, direction: int) -> None:
+        parent_board = self.parent
+        columns = parent_board.query(SprintColumn).nodes
+        cur_col_index = columns.index(self)
+        cur_item_index = self.index
+        logging.info(f"cur_col_index: {cur_col_index}, cur_item_index: {cur_item_index}")
+        target_col_index = cur_col_index + direction
+        if 0 <= target_col_index < len(columns):
+            self.index = None
+            target_col = columns[cur_col_index + direction]
+            target_col.focus()
+            next_item_index = cur_item_index if cur_item_index < len(target_col) else len(target_col) - 1
+            logging.info(f"next_item_index: {next_item_index}")
+            target_col.index = next_item_index
+
+    def on_blur(self, event: events.Blur) -> None:
+        self.index = None
 
     # def on_list_view_selected(self, event: ListView.Selected):
     #     work_item: WorkItem = event.item.children[0]
